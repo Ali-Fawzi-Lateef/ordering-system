@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+
+@font-face {
+    font-family: "IBMPlexSansArabic-Bold";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Bold.ttf");
+}
+@font-face {
+    font-family: "IBMPlexSansArabic-ExtraLight";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-ExtraLight.ttf");
+}
+@font-face {
+    font-family: "IBMPlexSansArabic-Light";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Light.ttf");
+}
+@font-face {
+    font-family: "IBMPlexSansArabic-Medium";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Medium.ttf");
+}
+@font-face {
+    font-family: "IBMPlexSansArabic-Regular";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Regular.ttf");
+}
+@font-face {
+    font-family: "IBMPlexSansArabic-SemiBold";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-SemiBold.ttf");
+}
+@font-face {
+    font-family: "IBMPlexSansArabic-Thin";
+    src: url("./fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Thin.ttf");
+}
+
+@tailwind utilities;
