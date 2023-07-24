@@ -16,13 +16,13 @@ import NavBar from "@/components/NavBar.vue";
 import {ref} from "vue";
 import UsersTable from "@/components/UsersTable.vue";
 import Pagination from "@/components/Pagination.vue";
-import {interact} from "@/utlis/axiosServics";
+import {apiCall} from "@/utlis/axiosServics";
 
 const users = ref({});
 const loading = ref(true);
 const error = ref(false);
 
-interact('users').then(value => {
+apiCall('users').then(value => {
   users.value = value;
   loading.value = false;
 }).catch(err => {
@@ -32,7 +32,7 @@ interact('users').then(value => {
 
 const Update = (page) => {
   loading.value = true;
-  interact('users?page=' + page).then(value => {
+  apiCall('users?page=' + page).then(value => {
     users.value = value;
   }).catch(err => {
     error.value = true;

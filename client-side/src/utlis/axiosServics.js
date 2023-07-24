@@ -1,7 +1,7 @@
 import axios from "axios";
 import {getAuthToken} from "@/utlis/auth";
 
-export function interact(endpoint, data, method = 'GET') {
+export function apiCall(endpoint, data, method = 'GET') {
     return new Promise(async (resolve, reject) => {
         try {
             let res = await axios({
@@ -15,7 +15,7 @@ export function interact(endpoint, data, method = 'GET') {
             resolve(res.data)
         }
         catch (err) {
-            console.error('Caught an error during user creation:', err)
+            console.error('Caught an error during api call:', err)
             reject(err)
         }
     })

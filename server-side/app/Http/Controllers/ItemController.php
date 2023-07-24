@@ -29,6 +29,7 @@ class ItemController extends Controller
         ]);
         Item::create($request->all());
         return response()->json(['message' => 'Item created successfully'], 201);
+
     }
 
     /**

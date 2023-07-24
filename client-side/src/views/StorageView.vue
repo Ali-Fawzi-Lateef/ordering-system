@@ -7,6 +7,11 @@
     <span class="text-error">Something went wrong</span>
   </div>
   <div v-else>
+    <router-link to="/add-item" class="flex justify-end">
+      <button class="btn btn-ghost btn-square">
+        <PlusCircleIcon class="text-success w-6" />
+      </button>
+    </router-link>
     <StorageTable v-bind:storage="storage.data"/>
     <Pagination v-bind:data="storage" @update="Update" class="w-full justify-center" />
   </div>
@@ -18,23 +23,25 @@ import NavBar from "@/components/NavBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import StorageTable from "@/components/StorageTable.vue";
 import {ref} from "vue";
-import {interact} from "@/utlis/axiosServics";
+import {apiCall} from "@/utlis/axiosServics";
+import {PlusCircleIcon} from "@heroicons/vue/24/outline";
 
 const storage = ref({});
 const loading = ref(true);
 const error = ref(false);
 
-interact('storage').then(value => {
+apiCall('storage').then(value => {
   storage.value = value;
   loading.value = false;
 }).catch(err => {
   loading.value = false;
   error.value = true;
+  console.error(err);
 })
 
 const Update = (page) => {
   loading.value = true;
-  interact('storage?page=' + page).then(value => {
+  apiCall('storage?page=' + page).then(value => {
     storage.value = value;
   }).catch(err => {
     error.value = true;

@@ -63,6 +63,16 @@ const router = createRouter({
       path: '/storage/:id',
       name: 'item-details',
       component: () => import('../views/ItemView.vue'),
+    },
+    {
+      path: '/add-item',
+      name: 'add-item',
+      component: () => import('../views/AddItemView.vue'),
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../views/CartView.vue'),
     }
   ]
 })

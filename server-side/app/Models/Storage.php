@@ -19,7 +19,8 @@ class Storage extends Model
         'name',
         'price',
         'quantity',
-        'image'
+        'image',
+        'description'
     ];
     public $timestamps = false;
 }

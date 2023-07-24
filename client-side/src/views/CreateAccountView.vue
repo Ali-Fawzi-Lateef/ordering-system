@@ -49,7 +49,7 @@
 
 <script setup>
 import {ref} from 'vue'
-import {interact} from "@/utlis/axiosServics";
+import {apiCall} from "@/utlis/axiosServics";
 import router from "@/router";
 
 const name = ref('');
@@ -74,7 +74,7 @@ const handleSubmit = async () => {
   formData.append('password_confirmation', password_confirmation.value);
 
   try {
-    await interact('auth/register', formData, 'POST');
+    await apiCall('auth/register', formData, 'POST');
     router.push('/login');
 
   } catch (e) {

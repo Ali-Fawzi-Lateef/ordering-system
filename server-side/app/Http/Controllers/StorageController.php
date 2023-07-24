@@ -13,8 +13,13 @@ class StorageController extends Controller
      */
     public function index(): JsonResponse
     {
-        $storages = Storage::paginate(7);
-        return response()->json($storages);
+        $storage = Storage::paginate(8);
+        foreach ($storage as $item) {
+            if ($item->image) {
+                $item->image = url(\Illuminate\Support\Facades\Storage::url($item->image));
+            }
+        }
+        return response()->json($storage);
     }
 
     /**
@@ -24,9 +29,10 @@ class StorageController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
+            'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
+            'description' => 'nullable|string|max:255',
         ]);
 
         $path = null;
@@ -37,6 +43,7 @@ class StorageController extends Controller
             'name' => $request->name,
             'price' => $request->price,
             'quantity' => $request->quantity,
+            'description' => $request->description,
             'image' => $path,
         ]);
         return response()->json(['message' => 'Storage created successfully'], 201);
@@ -47,7 +54,11 @@ class StorageController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return response()->json(Storage::findOrFail($id));
+        $storage = Storage::findOrFail($id);
+        if ($storage->image) {
+            $storage->image = url(\Illuminate\Support\Facades\Storage::url($storage->image));
+        }
+        return response()->json($storage);
     }
 
     /**
@@ -57,11 +68,27 @@ class StorageController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
+            'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
+            'description' => 'nullable|string|max:255',
         ]);
+
         $storage = Storage::findOrFail($id);
-        $storage->update($request->all());
+        $path = null;
+        if( $storage->image){
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($storage->image);
+        }
+        if ($request->hasFile('image')) {
+            $path = $request->image->store('images', 'public');
+        }
+        $storage->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'description' => $request->description,
+            'image' => $path
+        ]);
         return response()->json(['message' => 'Storage updated successfully'], 200);
     }
 

@@ -33,7 +33,7 @@ class UserController extends Controller
         }
         return response()->json($user);
     }
-    public function updateProfileImage(Request $request): JsonResponse
+    public function updateProfile(Request $request): JsonResponse
     {
         $request->validate([
             'profile_image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',

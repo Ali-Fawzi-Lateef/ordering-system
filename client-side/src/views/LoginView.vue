@@ -38,7 +38,7 @@
 <script setup>
 import {ref} from 'vue'
 import {setAuthToken} from "@/utlis/auth";
-import {interact} from "@/utlis/axiosServics";
+import {apiCall} from "@/utlis/axiosServics";
 import router from "@/router";
 
 /*
@@ -61,7 +61,7 @@ const handleSubmit = async () => {
   formData.append('password', password.value);
 
   try {
-    const value = await interact('auth/login', formData, 'POST');
+    const value = await apiCall('auth/login', formData, 'POST');
     setAuthToken(value.token)
     router.push('/');
   } catch (e) {

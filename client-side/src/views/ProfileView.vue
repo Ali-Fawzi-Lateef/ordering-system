@@ -1,6 +1,6 @@
 <template>
   <NavBar/>
-    <div class="card static sm:w-[21rem] mx-auto m-4 bg-base-100 shadow-xl">
+    <div class="card static w-[21rem] mx-auto m-4 bg-base-100 shadow-xl">
       <div v-if="loading" class="mx-auto m-56">
         <span class="loading loading-spinner loading-lg"></span>
       </div>
@@ -11,21 +11,21 @@
           <figure class="pt-10 avatar static flex-row">
 
             <button v-if="imageUrl" class="mt-16" @click="saveChanges" title="save">
-              <CheckIcon class="text-primary w-6" />
+              <CheckIcon class="text-success w-6" />
             </button>
 
             <div class="w-24 rounded-full" :class="imageUrl ? '' : 'ml-6'" title="profile image">
               <img v-if="imageUrl" :src="imageUrl" />
               <img v-else-if="user.profile_image" :src="user.profile_image" alt="Profile Image">
-              <UserCircleIcon v-else />
+              <UserCircleIcon  />
             </div>
 
             <button v-if="imageUrl" @click="discardChanges" class="mt-16" title="discard">
-              <XMarkIcon class="text-primary w-6" />
+              <XMarkIcon class="text-error w-6" />
             </button>
 
-            <label v-else for="imageUploader" class="cursor-pointer mt-16">
-              <ArrowUpTrayIcon class="text-primary w-6" />
+            <label v-else for="imageUploader" class="cursor-pointer mt-16" title="upload an image">
+              <ArrowUpTrayIcon class="text-secondary w-6" />
               <input
                   id="imageUploader"
                   accept="image/jpeg, image/png, image/jpg, image/svg"
@@ -61,7 +61,8 @@ import NavBar from "@/components/NavBar.vue";
 import { UserCircleIcon, ArrowUpTrayIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import {ref} from "vue";
 import router from "@/router";
-import {interact} from "@/utlis/axiosServics";
+import {apiCall} from "@/utlis/axiosServics";
+
 
 const user = ref({});
 const loading = ref(true);
@@ -69,7 +70,7 @@ const error = ref(false);
 const imageUrl = ref(null);
 const image = ref(null);
 
-interact('user').then(value => {
+apiCall('user').then(value => {
   user.value = (value)
   loading.value = false
 }).catch(err => {
@@ -90,7 +91,7 @@ const saveChanges = async () => {
 
   try {
     loading.value = true;
-     await interact('user/profile-image', formData, 'POST');
+     await apiCall('user', formData, 'POST');
      router.go(0);
   } catch (e) {
     error.value = true

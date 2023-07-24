@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('storages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->BigInteger('price');
-            $table->BigInteger('quantity');
+            $table->unsignedDouble('price');
+            $table->unsignedBigInteger('quantity');
+            $table->string('description');
             $table->string('image')->nullable();
         });
     }

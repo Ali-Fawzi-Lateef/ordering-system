@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\UserController;
@@ -28,7 +29,9 @@ Route::controller(AuthController::class)->prefix('v1/auth')->group(function () {
 Route::middleware('auth:api')->prefix('v1')->group(function () {
     Route::get('users', [UserController::class, 'index'])->middleware('admin');
     Route::get('user', [UserController::class, 'getAuthUser']);
-    Route::patch('user/profile-image', [UserController::class, 'updateProfileImage']);
+    Route::patch('user', [UserController::class, 'updateProfile']);
+    Route::get('cart', [CartController::class, 'index']);
+    Route::post('cart', [CartController::class, 'addToCart']);
     Route::apiResource('order', OrderController::class);
     Route::apiResource('storage',StorageController::class);
 });

@@ -15,7 +15,8 @@ class Item extends Model
         'name',
         'price',
         'quantity',
-        'image'
+        'image',
+        'description'
     ];
     public function order(): BelongsTo
     {

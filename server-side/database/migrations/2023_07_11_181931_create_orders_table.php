@@ -17,7 +17,6 @@ return new class extends Migration
             $table->timestamp("created_at");
             $table->uuid('customer_id');
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
-
         });
     }
 

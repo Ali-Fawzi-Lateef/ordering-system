@@ -8,24 +8,10 @@
       <span class="text-error">Something went wrong</span>
     </div>
     <div v-else>
-      <div class="flex justify-end">
-        <button class="btn btn-ghost btn-square" onclick="my_modal_1.showModal()">
-          <TrashIcon class="text-error w-6" />
-        </button>
-        <dialog id="my_modal_1" class="modal">
-          <form method="dialog" class="modal-box">
-            <p class="py-4">Are you sure that you want to delete the item: <span class="badge badge-secondary badge-outline kbd-sm">{{name}}</span></p>
-            <div class="modal-action">
-              <button class="btn btn-error" @click="deleteItem">Delete</button>
-              <button class="btn">Cancel</button>
-            </div>
-          </form>
-        </dialog>
-      </div>
-      <figure class="sm:pt-10 pt-2 avatar static flex-row">
+      <figure class="pt-10 avatar static flex-row">
+
         <div class="w-36" title="image">
-          <img v-if="imageUrl" :src="imageUrl"  alt=""/>
-          <img v-else-if="image" :src="image" alt="Image" class="cursor-pointer" title="show image" @click="showImage(image)">
+          <img v-if="imageUrl" :src="imageUrl"  alt="stuff"/>
           <InboxStackIcon v-else />
         </div>
         <button v-if="imageUrl" @click="discardChanges" class="mt-28" title="discard">
@@ -43,6 +29,7 @@
           >
         </label>
       </figure>
+
       <form class="card-body items-center text-center">
         <div class="form-control">
           <label class="label">
@@ -60,16 +47,25 @@
           <label class="label">
             <span class="label-text">Item Price</span>
           </label>
-          <input type="text" title="price" placeholder="price" class="input input-bordered" v-model="price" />
+          <input type="number" title="price" placeholder="price" class="input input-bordered" v-model="price" />
         </div>
         <div class="form-control">
           <label class="label">
             <span class="label-text">Item Quantity</span>
           </label>
-          <input type="text" title="quantity" placeholder="quantity" class="input input-bordered" v-model="quantity" />
+          <input type="number" title="quantity" placeholder="quantity" class="input input-bordered" v-model="quantity" />
         </div>
         <div class="form-control">
-          <button type="button" class="btn btn-primary" @click="saveChanges">Save</button>
+          <button type="button" class="btn btn-primary" onclick="my_modal_1.showModal()">Add</button>
+          <dialog id="my_modal_1" class="modal">
+            <form method="dialog" class="modal-box">
+              <p class="py-4">Are you sure that you want to add this item ?</p>
+              <div class="modal-action">
+                <button class="btn btn-primary" @click="addItem">Add</button>
+                <button class="btn">Cancel</button>
+              </div>
+            </form>
+          </dialog>
         </div>
       </form>
     </div>
@@ -78,67 +74,36 @@
 <script setup>
 import NavBar from "@/components/NavBar.vue";
 import router from "@/router";
-import {InboxStackIcon, ArrowUpTrayIcon, XMarkIcon, TrashIcon} from "@heroicons/vue/24/outline";
+import {ArrowUpTrayIcon, InboxStackIcon, XMarkIcon} from "@heroicons/vue/24/outline";
 import {ref} from "vue";
 import {apiCall} from "@/utlis/axiosServics";
 
-const loading = ref(true);
+const loading = ref(false);
 const error = ref(false);
 
 const imageUrl = ref(null);
 const image = ref(null);
-const imageBuffer = ref(null);
 const price = ref(null);
 const name = ref(null);
 const quantity = ref(null);
 const description = ref(null);
-const id = router.currentRoute.value.params.id;
-
-apiCall(`storage/${id}`).then(value => {
-  image.value = value.image
-  imageBuffer.value = value.image
-  price.value = value.price
-  description.value = value.description
-  name.value = value.name
-  quantity.value = value.quantity
-  loading.value = false
-}).catch(err => {
-  error.value = true
-  loading.value = false
-  console.error(err)
-})
 const  imagePreview = (e) => {
   image.value = e.target.files[0];
   imageUrl.value = URL.createObjectURL(image.value);
 }
 const discardChanges = () => {
   imageUrl.value = null;
-  image.value = imageBuffer.value;
-
 }
-const showImage = (image) => {
-  window.open(image, '_blank')
-}
-const saveChanges = async () => {
+const addItem = async () => {
   const formData = new FormData();
-  formData.append('_method', 'PUT');
   formData.append('price', price.value);
   formData.append('name', name.value);
   formData.append('quantity', quantity.value);
+  formData.append('image', image.value);
   formData.append('description', description.value);
-  imageUrl.value ? formData.append('image', image.value) : null;
   try {
     loading.value = true;
-    await apiCall(`storage/${id}`, formData, 'POST');
-    router.go(-1);
-  } catch (e) {
-    error.value = true
-  }
-}
-const deleteItem = async () => {
-  try {
-    loading.value = true;
-    await apiCall(`storage/${id}`, {}, 'DELETE');
+    await apiCall(`storage`, formData, 'POST');
     router.go(-1);
   } catch (e) {
     error.value = true

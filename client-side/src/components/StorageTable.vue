@@ -12,12 +12,12 @@
 
       <tbody>
       <tr v-for="item in storage">
-        <td>{{item.name}}</td>
-        <td>{{item.price}}</td>
-        <td>{{item.quantity}}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.price }}$</td>
+        <td>{{ item.quantity }}</td>
         <td><button
             @click="router.push(`/storage/${item.id}`)" title="show item details"
-            class="btn btn-xs btn-info "
+            class="btn btn-xs btn-outline btn-info "
         >show</button>
         </td>
       </tr>

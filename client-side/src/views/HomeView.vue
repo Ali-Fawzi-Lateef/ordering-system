@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import AdminHomeView from './AdminHomeView.vue';
-import CustomerHomeView from './CustomerHomeView.vue';
+import AdminHomeView from '../components/AdminHome.vue';
+import CustomerHomeView from '../components/CustomerHome.vue';
 /*
  * This is the home page of the application.
  * It will display different content based on the role of the user.

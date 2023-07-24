@@ -15,8 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('order_id');
             $table->string('name');
-            $table->BigInteger('price');
-            $table->BigInteger('quantity');
+            $table->unsignedDouble('price');
+            $table->unsignedBigInteger('quantity');
+            $table->string('description');
             $table->string('image')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
