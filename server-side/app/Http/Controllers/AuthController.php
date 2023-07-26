@@ -53,10 +53,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json([
-            'message' => 'User created successfully',
-            'user' => $user //on production, don't return user
-        ]);
+        return response()->json(['message' => 'User created successfully']);
     }
 
     public function logout(): JsonResponse

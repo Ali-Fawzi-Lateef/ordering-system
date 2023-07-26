@@ -9,10 +9,10 @@
     </div>
     <div v-else>
       <div class="flex justify-end">
-        <button class="btn btn-ghost btn-square" onclick="my_modal_1.showModal()">
+        <button class="btn btn-ghost btn-square" onclick="remove_item_model.showModal()">
           <TrashIcon class="text-error w-6" />
         </button>
-        <dialog id="my_modal_1" class="modal">
+        <dialog id="remove_item_model" class="modal">
           <form method="dialog" class="modal-box">
             <p class="py-4">Are you sure that you want to delete the item: <span class="badge badge-secondary badge-outline kbd-sm">{{name}}</span></p>
             <div class="modal-action">
@@ -52,12 +52,6 @@
         </div>
         <div class="form-control">
           <label class="label">
-            <span class="label-text">Item Description</span>
-          </label>
-          <input type="text" title="description" placeholder="description" class="input input-bordered" v-model="description" />
-        </div>
-        <div class="form-control">
-          <label class="label">
             <span class="label-text">Item Price</span>
           </label>
           <input type="text" title="price" placeholder="price" class="input input-bordered" v-model="price" />
@@ -67,6 +61,12 @@
             <span class="label-text">Item Quantity</span>
           </label>
           <input type="text" title="quantity" placeholder="quantity" class="input input-bordered" v-model="quantity" />
+        </div>
+        <div class="form-control static">
+          <label class="label">
+            <span class="label-text">Item Description (255 characters maximum)</span>
+          </label>
+          <input type="text" title="description" placeholder="description" class="input input-bordered" v-model="description" />
         </div>
         <div class="form-control">
           <button type="button" class="btn btn-primary" @click="saveChanges">Save</button>
@@ -103,6 +103,7 @@ apiCall(`storage/${id}`).then(value => {
   quantity.value = value.quantity
   loading.value = false
 }).catch(err => {
+  loading.value = false
   error.value = true
   loading.value = false
   console.error(err)

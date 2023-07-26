@@ -19,6 +19,7 @@ const AUTH_TOKEN_KEY = 'authToken'
 export function logoutUser() {
     clearAuthToken()
     router.push('/login')
+    window.location.reload()
 }
 
 export function setAuthToken(token) {

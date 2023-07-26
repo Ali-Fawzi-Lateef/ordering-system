@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -23,6 +24,24 @@ class UserController extends Controller
         }
 
         return response()->json($users);
+    }
+    public function getStatisticsForAdminHome(): JsonResponse
+    {
+        $ordersWithStatus = DB::table('orders')
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->get();
+        $topSoldItems = DB::table('items')
+            ->join('orders', 'items.order_id', '=', 'orders.id')
+            ->where('orders.status', '=', 'completed')
+            ->select('items.name', DB::raw('sum(items.quantity) as total_quantity'))
+            ->groupBy('items.name')
+            ->orderBy('total_quantity', 'desc')
+            ->get();
+        return response()->json([
+            'ordersWithStatus' => $ordersWithStatus,
+            'topSoldItems' => $topSoldItems
+        ]);
     }
     public function getAuthUser(): JsonResponse
     {

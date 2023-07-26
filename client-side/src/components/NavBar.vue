@@ -29,14 +29,14 @@
               <div class="dropdown dropdown-hover flex">
                 <label tabindex="0" class="btn btn-ghost btn-circle">
                   <div class="flex flex-col w-full h-full" >
-                    <span class="badge badge-xs ml-4 badge-success badge-outline rounded-full ">8</span>
+                    <span class="badge badge-xs ml-4 badge-success badge-outline rounded-full ">{{ cart.quantity }}</span>
                     <ShoppingCartIcon class="w-6 ml-2 text-secondary" />
                   </div>
                 </label>
                 <div tabindex="0" class="mt-12 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow">
                   <div class="card-body">
-                    <span class="font-bold text-lg">8 Items</span>
-                    <span class="text-info">Subtotal: $999</span>
+                    <span class="font-bold text-lg">{{ cart.quantity }} Items</span>
+                    <span class="text-success">Total: {{ cart.total }}$</span>
                     <div class="card-actions">
                       <router-link to="/cart" class="btn btn-primary btn-block">View cart</router-link>
                     </div>
@@ -97,8 +97,28 @@
 import { Cog6ToothIcon, Bars3Icon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import { logoutUser } from "@/utlis/auth";
 import jwtDecode from "jwt-decode";
+import {ref} from "vue";
+import {apiCall} from "@/utlis/axiosServics";
 
+const cart = ref({});
 const isCustomer = () =>{
   return jwtDecode(localStorage.getItem('authToken')).role === 'customer';
+}
+if (isCustomer()){
+  apiCall('cart').then(value => {
+    cart.value = formattedCart(value)
+  }).catch(err => {
+    console.log(err);
+  })
+}
+const formattedCart = (vlaue) => {
+  const total = Object.values(vlaue).reduce((accumulator, currentItem) => {
+    return accumulator + currentItem.total_price_for_item;
+  }, 0);
+
+  return {
+    "quantity" : Object.keys(vlaue).length,
+    "total" : total
+  };
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="hero-content flex-col w-full">
       <div class="card w-[21rem] md:w-full max-w-3xl shadow-2xl bg-base-100 md:flex md:flex-row">
         <form class="md:w-1/2" @submit.prevent>
-          <h1 class="text-5xl font-bold text-center m-2">Login</h1>
+          <h1 class="text-5xl font-bold text-center mt-6">Login</h1>
           <div class="card-body">
             <div class="form-control">
               <label class="label">

@@ -39,12 +39,6 @@
         </div>
         <div class="form-control">
           <label class="label">
-            <span class="label-text">Item Description</span>
-          </label>
-          <input type="text" title="description" placeholder="description" class="input input-bordered" v-model="description" />
-        </div>
-        <div class="form-control">
-          <label class="label">
             <span class="label-text">Item Price</span>
           </label>
           <input type="number" title="price" placeholder="price" class="input input-bordered" v-model="price" />
@@ -54,6 +48,12 @@
             <span class="label-text">Item Quantity</span>
           </label>
           <input type="number" title="quantity" placeholder="quantity" class="input input-bordered" v-model="quantity" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Item Description (255 characters maximum)</span>
+          </label>
+          <input type="text" title="description" placeholder="description" class="input input-bordered" v-model="description" />
         </div>
         <div class="form-control">
           <button type="button" class="btn btn-primary" onclick="my_modal_1.showModal()">Add</button>
@@ -99,13 +99,14 @@ const addItem = async () => {
   formData.append('price', price.value);
   formData.append('name', name.value);
   formData.append('quantity', quantity.value);
-  formData.append('image', image.value);
+  imageUrl.value ? formData.append('image', image.value) : null;
   formData.append('description', description.value);
   try {
     loading.value = true;
     await apiCall(`storage`, formData, 'POST');
     router.go(-1);
   } catch (e) {
+    loading.value = false;
     error.value = true
   }
 }

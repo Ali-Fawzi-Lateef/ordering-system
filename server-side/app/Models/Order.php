@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Order extends Model
 {
     use HasFactory, UsesUuid;
-
+    public $timestamps = false;
     protected $fillable = [
         'status',
         'created_at',
@@ -23,7 +23,7 @@ class Order extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'customer_id');
     }
     public function items(): HasMany
     {

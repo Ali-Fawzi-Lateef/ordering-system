@@ -4,13 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'IBMPlexSansArabic-Bold': ['IBMPlexSansArabic-Bold', 'sans-serif'],
         'IBMPlexSansArabic-Medium': ['IBMPlexSansArabic-Medium', 'sans-serif'],
         'IBMPlexSansArabic-Regular': ['IBMPlexSansArabic-Regular', 'sans-serif'],
-        'IBMPlexSansArabic-Light': ['IBMPlexSansArabic-Light', 'sans-serif'],
-        'IBMPlexSansArabic-ExtraLight': ['IBMPlexSansArabic-ExtraLight', 'sans-serif'],
-        'IBMPlexSansArabic-Thin': ['IBMPlexSansArabic-Thin', 'sans-serif'],
-        'IBMPlexSansArabic-SemiBold': ['IBMPlexSansArabic-SemiBold', 'sans-serif'],
       },
     },
   },

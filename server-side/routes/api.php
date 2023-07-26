@@ -27,11 +27,21 @@ Route::controller(AuthController::class)->prefix('v1/auth')->group(function () {
 });
 
 Route::middleware('auth:api')->prefix('v1')->group(function () {
+    Route::get('admin/home', [UserController::class, 'getStatisticsForAdminHome'])->middleware('admin');
     Route::get('users', [UserController::class, 'index'])->middleware('admin');
     Route::get('user', [UserController::class, 'getAuthUser']);
     Route::patch('user', [UserController::class, 'updateProfile']);
-    Route::get('cart', [CartController::class, 'index']);
-    Route::post('cart', [CartController::class, 'addToCart']);
-    Route::apiResource('order', OrderController::class);
+
+    Route::get('cart', [CartController::class, 'getCartTotalCost']);
+    Route::get('cart/content', [CartController::class, 'getCartContent']);
+    Route::post('cart/', [CartController::class, 'addToCart']);
+    Route::delete('cart/clear', [CartController::class, 'clearCart']);
+    Route::delete('cart/{id}', [CartController::class, 'removeFromCart']);
+    Route::patch('cart/{id}', [CartController::class, 'updateCart']);
+
+    Route::post('order', [OrderController::class, 'submitOrder']);
+    Route::get('order', [OrderController::class, 'viewMyOrders']);
+    Route::get('order/index', [OrderController::class, 'index']);
+    Route::patch('order/{id}', [OrderController::class, 'updateOrderStatus']);
     Route::apiResource('storage',StorageController::class);
 });
