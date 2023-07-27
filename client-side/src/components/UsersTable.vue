@@ -8,7 +8,6 @@
         <th>Role Color</th>
       </tr>
       </thead>
-
       <tbody>
       <tr v-for="user in users">
         <td class="flex flex-row space-x-2">

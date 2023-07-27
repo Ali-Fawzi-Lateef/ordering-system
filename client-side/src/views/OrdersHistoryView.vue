@@ -1,10 +1,10 @@
 <template>
   <NavBar/>
-  <div v-if="loading" class="mx-auto m-56 flex justify-center">
+  <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
-  <div v-else-if="error" class="text-center m-56">
-    <span class="text-error">Something went wrong</span>
+  <div v-else-if="showErrorMessage" class="text-center md:m-56">
+    <span class="text-error">{{showErrorMessage}}</span>
   </div>
     <div v-else class="grid grid-cols-1 gap-4 lg:m-6">
       <div v-for="order in orders" class="card static mx-auto w-80 sm:w-[24rem] md:w-full flex flex-row bg-base-100 shadow-xl">
@@ -37,30 +37,31 @@
 <script setup>
 
 import NavBar from "@/components/NavBar.vue";
-import {apiCall} from "@/utlis/axiosServics";
-import {ref} from "vue";
+import {makeApiCall} from "@/utlis/makeApiCall";
+import {onMounted, ref} from "vue";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
 const orders = ref({})
-const loading = ref(true);
-const error = ref(false);
+const showLoading = ref(true);
+const showErrorMessage = ref(null);
 
-const badgeStyle = Object.freeze({
+const badgeStyle = {
   'pending': 'badge-warning',
   'processing': 'badge-primary',
   'completed': 'badge-success',
   'declined': 'badge-error',
-})
-const loadingStyle = Object.freeze({
+}
+const loadingStyle ={
   'pending': 'loading loading-bars loading-xs',
   'processing': 'loading loading-dots loading-xs',
-})
-apiCall('order').then(value => {
-  orders.value = value;
-  loading.value = false;
-  console.log(value)
-}).catch(err => {
-  error.value = true;
-  loading.value = false;
-  console.error(err)
+}
+onMounted(() => {
+  makeApiCall('order').then(value => {
+    orders.value = value;
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
+  })
 })
 </script>

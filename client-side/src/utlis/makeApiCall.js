@@ -1,7 +1,7 @@
 import axios from "axios";
 import {getAuthToken} from "@/utlis/auth";
 
-export function apiCall(endpoint, data, method = 'GET') {
+export function makeApiCall(endpoint, data, method = 'GET') {
     return new Promise(async (resolve, reject) => {
         try {
             let res = await axios({

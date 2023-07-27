@@ -1,11 +1,11 @@
 <template>
   <NavBar/>
   <div class="card static w-11/12 sm:w-[36rem] mx-auto m-4 bg-base-100 shadow-xl">
-    <div v-if="loading" class="mx-auto m-56">
+    <div v-if="showLoading" class="mx-auto m-56">
       <span class="loading loading-spinner loading-lg"></span>
     </div>
-    <div v-else-if="error" class="mx-auto m-56">
-      <span class="text-error">Something went wrong</span>
+    <div v-else-if="showErrorMessage" class="mx-auto md:m-56">
+      <span class="text-error">{{showErrorMessage}}</span>
     </div>
     <div v-else>
       <figure class="pt-10 avatar static flex-row">
@@ -76,17 +76,18 @@ import NavBar from "@/components/NavBar.vue";
 import router from "@/router";
 import {ArrowUpTrayIcon, InboxStackIcon, XMarkIcon} from "@heroicons/vue/24/outline";
 import {ref} from "vue";
-import {apiCall} from "@/utlis/axiosServics";
+import {makeApiCall} from "@/utlis/makeApiCall";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
-const loading = ref(false);
-const error = ref(false);
-
+const showLoading = ref(false);
+const showErrorMessage = ref(null);
 const imageUrl = ref(null);
 const image = ref(null);
 const price = ref(null);
 const name = ref(null);
 const quantity = ref(null);
 const description = ref(null);
+
 const  imagePreview = (e) => {
   image.value = e.target.files[0];
   imageUrl.value = URL.createObjectURL(image.value);
@@ -95,19 +96,19 @@ const discardChanges = () => {
   imageUrl.value = null;
 }
 const addItem = async () => {
+  showLoading.value = true;
   const formData = new FormData();
   formData.append('price', price.value);
   formData.append('name', name.value);
   formData.append('quantity', quantity.value);
   imageUrl.value ? formData.append('image', image.value) : null;
   formData.append('description', description.value);
-  try {
-    loading.value = true;
-    await apiCall(`storage`, formData, 'POST');
+  makeApiCall(`storage`, formData, 'POST').then(() =>{
     router.go(-1);
-  } catch (e) {
-    loading.value = false;
-    error.value = true
-  }
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
+  });
 }
 </script>

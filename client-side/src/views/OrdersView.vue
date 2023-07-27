@@ -1,17 +1,16 @@
 <template>
   <NavBar/>
-  <div v-if="loading" class="mx-auto m-56 flex justify-center">
+  <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
-  <div v-else-if="error" class="text-center m-56">
-    <span class="text-error">Something went wrong</span>
+  <div v-else-if="showErrorMessage" class="text-center md:m-56">
+    <span class="text-error">{{showErrorMessage}}</span>
   </div>
   <div v-else class="grid grid-cols-1 gap-4 lg:m-6">
     <div v-for="order in orders" class="card static mx-auto w-80 sm:w-[24rem] md:w-full flex flex-row bg-base-100 shadow-xl">
       <div class="card-body">
         <div class="flex justify-between">
           <button :class="`btn btn-sm btn-outline ${buttonStyle[order.status]}`" @click="showChangeStatusModel(order.status, order.id)">Update state</button>
-
           <div :class ='`flex space-x-1 ${badgeStyle[order.status]} justify-end badge badge-sm md:badge-md badge-outline`'>
             <h2 class="text-right font-IBMPlexSansArabic-Medium">{{ order.status }}</h2>
             <span :class="`${loadingStyle[order.status]}`"/>
@@ -58,39 +57,43 @@
 <script setup>
 
 import NavBar from "@/components/NavBar.vue";
-import {apiCall} from "@/utlis/axiosServics";
-import {ref} from "vue";
+import {makeApiCall} from "@/utlis/makeApiCall";
+import {onMounted, ref} from "vue";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
 const orders = ref({})
-const loading = ref(true);
-const error = ref(false);
+const showLoading = ref(true);
+const showErrorMessage = ref(null);
 const selectedOrderStatus = ref(null);
 const selectedOrderID = ref(null);
 
-const badgeStyle = Object.freeze({
+const badgeStyle = {
   'pending': 'badge-warning',
   'processing': 'badge-primary',
   'completed': 'badge-success',
   'declined': 'badge-error',
-})
-const buttonStyle = Object.freeze({
+}
+const buttonStyle = {
   'pending': 'btn-warning',
   'processing': 'btn-primary',
   'completed': 'btn-disabled',
   'declined': 'btn-disabled',
-})
-const loadingStyle = Object.freeze({
+}
+const loadingStyle = {
   'pending': 'loading loading-bars loading-xs',
   'processing': 'loading loading-dots loading-xs',
+}
+
+onMounted(() => {
+  makeApiCall('order/index').then(value => {
+    orders.value = value;
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
+  })
 })
-apiCall('order/index').then(value => {
-  orders.value = value;
-  loading.value = false;
-}).catch(err => {
-  error.value = true;
-  loading.value = false;
-  console.error(err)
-})
+
 const showChangeStatusModel = (status, id) => {
   const dialog = document.getElementById('change_order_status_model')
   dialog.showModal()
@@ -98,18 +101,15 @@ const showChangeStatusModel = (status, id) => {
   selectedOrderID.value = id;
 }
 const updateOrderStatus = () => {
-  const dialog = document.getElementById('change_order_status_model')
+  showLoading.value = true;
   const formData = new FormData()
   formData.append('status', document.getElementById('updatedOrderStatus').value)
   formData.append('_method', 'PATCH')
-  loading.value = true;
-  apiCall(`order/${selectedOrderID.value}`,formData, 'POST').then(value => {
+  makeApiCall(`order/${selectedOrderID.value}`,formData, 'POST').then(() => {
     window.location.reload();
-    console.log(value)
-  }).catch(err => {
-    error.value = true;
-    loading.value = false;
-    console.error(err)
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+    showLoading.value = false;
   })
 }
 </script>

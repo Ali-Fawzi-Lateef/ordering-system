@@ -3,12 +3,6 @@ import LoginView from '../views/LoginView.vue'
 import {isLoggedIn} from "@/utlis/auth";
 import jwtDecode from "jwt-decode";
 
-/*
-  * The routes for the application. Each route should map to a component.
-  * The "meta" property is used to set the "allowAnonymous" flag to true for the login route.
-  * The "props" property is used to pass the role to the home route.
-  * The "beforeEach" hook is used to redirect the user to the login page if they are not logged in.
- */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -77,10 +71,6 @@ const router = createRouter({
   ]
 })
 
-/*
-  * This is the "beforeEach" it is also used to redirect the user to the login page if they are not logged in and try to access a page that requires authentication
-  * Also it will redirect the user to the home page if they are logged in and try to access the login page
- */
 router.beforeEach((to, from, next) => {
   if (to.name === 'login' && isLoggedIn()) {
     next({ name: 'home' })

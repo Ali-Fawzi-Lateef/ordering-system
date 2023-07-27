@@ -7,7 +7,6 @@
     >
       «
     </button>
-
     <button
         @click="emit('update',i)"
         class="join-item btn btn-xs md:btn-sm lg:btn-md"
@@ -17,7 +16,6 @@
     >
       {{i}}
     </button>
-
     <button
         class="join-item btn btn-xs md:btn-sm lg:btn-md"
         :class="{ 'btn-disabled': props.data.current_page === pages}"
@@ -29,13 +27,7 @@
 </template>
 
 <script setup>
-/*
- * the pages variable is computed by dividing the total number of items by the number of items per page.
- * NOTE: the loop will only run 5 times if the number of pages is greater than 5.
- */
 const props = defineProps(['data']);
 const emit = defineEmits(['update']);
 const pages = Math.ceil(props.data.total/props.data.per_page);
-
-
 </script>

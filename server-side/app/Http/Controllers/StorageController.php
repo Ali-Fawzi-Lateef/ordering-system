@@ -8,9 +8,6 @@ use Illuminate\Http\Request;
 
 class StorageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): JsonResponse
     {
         $storage = Storage::paginate(8);
@@ -21,10 +18,6 @@ class StorageController extends Controller
         }
         return response()->json($storage);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
@@ -48,10 +41,6 @@ class StorageController extends Controller
         ]);
         return response()->json(['message' => 'Storage created successfully'], 201);
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id): JsonResponse
     {
         $storage = Storage::findOrFail($id);
@@ -60,10 +49,6 @@ class StorageController extends Controller
         }
         return response()->json($storage);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id): JsonResponse
     {
         $request->validate([
@@ -75,8 +60,8 @@ class StorageController extends Controller
         ]);
 
         $storage = Storage::findOrFail($id);
-        $path = null;
-        if( $storage->image){
+        $path = $storage->image;
+        if($path && $request->hasFile('image')){
             \Illuminate\Support\Facades\Storage::disk('public')->delete($storage->image);
         }
         if ($request->hasFile('image')) {
@@ -92,9 +77,6 @@ class StorageController extends Controller
         return response()->json(['message' => 'Storage updated successfully'], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id): JsonResponse
     {
         $storage = Storage::findOrFail($id);

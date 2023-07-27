@@ -1,10 +1,10 @@
 <template>
   <NavBar/>
-  <div v-if="loading" class="mx-auto m-56 flex justify-center">
+  <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
-  <div v-else-if="error" class="text-center m-56">
-    <span class="text-error">Something went wrong</span>
+  <div v-else-if="showErrorMessage" class="text-center m-56">
+    <span class="text-error">{{showErrorMessage}}</span>
   </div>
   <div v-else>
     <div class="grid grid-cols-2 m-2 sm:grid-cols-3 sm:m-3 lg:grid-cols-4 lg:m-4 gap-4 ">
@@ -42,56 +42,59 @@
 
 <script setup>
 import NavBar from "@/components/NavBar.vue";
-import {apiCall} from "@/utlis/axiosServics";
-import {ref} from "vue";
+import {makeApiCall} from "@/utlis/makeApiCall";
+import {onMounted, ref} from "vue";
 import Pagination from "@/components/Pagination.vue";
 import {InboxStackIcon, PlusCircleIcon, MinusCircleIcon} from "@heroicons/vue/24/outline";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
 const storage = ref({})
-const loading = ref(true);
-const error = ref(false);
+const showLoading = ref(true);
+const showErrorMessage = ref(null);
 const counter = ref(0);
 const selectedItemID = ref(null);
 
-apiCall('storage').then(value => {
-  storage.value = value;
-  loading.value = false;
-}).catch(err => {
-  loading.value = false;
-  console.error(err)
+onMounted(() => {
+  makeApiCall('storage').then(value => {
+    storage.value = value;
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
+  })
 })
 const Update = (page) => {
-  loading.value = true;
-  apiCall('storage?page=' + page).then(value => {
+  showLoading.value = true;
+  makeApiCall('storage?page=' + page).then(value => {
     storage.value = value;
     window.scrollTo(0,0);
-  }).catch(err => {
-    error.value = true;
-    console.error(err);
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
   })
-  loading.value = false;
 }
 const showImage = (image) => {
   window.open(image, '_blank');
 }
 const addToCart = (id) => {
+  selectedItemID.value = id;
   const formData = new FormData();
   formData.append('storage_id', id);
-  apiCall(`cart`, formData,'POST').then(value => {
-    selectedItemID.value = id;
+  makeApiCall(`cart`, formData,'POST').then(value => {
     counter.value = value.quantity;
-  }).catch(err => {
-    console.error(err);
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
   })
 }
 const updateCart = (id, value) =>{
   const formData = new FormData();
   formData.append('quantity', value);
   formData.append('_method', 'PATCH');
-  apiCall(`cart/${id}`, formData, 'POST').then(value => {
+  makeApiCall(`cart/${id}`, formData, 'POST').then(value => {
     counter.value = value.quantity;
-  }).catch(err => {
-    console.error(err);
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
   })
 }
 </script>

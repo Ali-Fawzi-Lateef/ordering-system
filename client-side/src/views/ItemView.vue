@@ -1,11 +1,11 @@
 <template>
   <NavBar/>
   <div class="card static w-11/12 sm:w-[36rem] mx-auto m-4 bg-base-100 shadow-xl">
-    <div v-if="loading" class="mx-auto m-56">
+    <div v-if="showLoading" class="mx-auto m-56">
       <span class="loading loading-spinner loading-lg"></span>
     </div>
-    <div v-else-if="error" class="mx-auto m-56">
-      <span class="text-error">Something went wrong</span>
+    <div v-else-if="showErrorMessage" class="mx-auto md:m-56">
+      <span class="text-error">{{showErrorMessage}}</span>
     </div>
     <div v-else>
       <div class="flex justify-end">
@@ -79,12 +79,12 @@
 import NavBar from "@/components/NavBar.vue";
 import router from "@/router";
 import {InboxStackIcon, ArrowUpTrayIcon, XMarkIcon, TrashIcon} from "@heroicons/vue/24/outline";
-import {ref} from "vue";
-import {apiCall} from "@/utlis/axiosServics";
+import {onMounted, ref} from "vue";
+import {makeApiCall} from "@/utlis/makeApiCall";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
-const loading = ref(true);
-const error = ref(false);
-
+const showLoading = ref(true);
+const showErrorMessage = ref(null);
 const imageUrl = ref(null);
 const image = ref(null);
 const imageBuffer = ref(null);
@@ -94,19 +94,19 @@ const quantity = ref(null);
 const description = ref(null);
 const id = router.currentRoute.value.params.id;
 
-apiCall(`storage/${id}`).then(value => {
-  image.value = value.image
-  imageBuffer.value = value.image
-  price.value = value.price
-  description.value = value.description
-  name.value = value.name
-  quantity.value = value.quantity
-  loading.value = false
-}).catch(err => {
-  loading.value = false
-  error.value = true
-  loading.value = false
-  console.error(err)
+onMounted(() => {
+  makeApiCall(`storage/${id}`).then(value => {
+    image.value = value.image
+    imageBuffer.value = value.image
+    price.value = value.price
+    description.value = value.description
+    name.value = value.name
+    quantity.value = value.quantity
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error)
+  }).finally(() => {
+    showLoading.value = false
+  })
 })
 const  imagePreview = (e) => {
   image.value = e.target.files[0];
@@ -115,12 +115,12 @@ const  imagePreview = (e) => {
 const discardChanges = () => {
   imageUrl.value = null;
   image.value = imageBuffer.value;
-
 }
 const showImage = (image) => {
   window.open(image, '_blank')
 }
 const saveChanges = async () => {
+  showLoading.value = true;
   const formData = new FormData();
   formData.append('_method', 'PUT');
   formData.append('price', price.value);
@@ -128,18 +128,18 @@ const saveChanges = async () => {
   formData.append('quantity', quantity.value);
   formData.append('description', description.value);
   imageUrl.value ? formData.append('image', image.value) : null;
-  try {
-    loading.value = true;
-    await apiCall(`storage/${id}`, formData, 'POST');
+  makeApiCall(`storage/${id}`, formData, 'POST').then(() => {
     router.go(-1);
-  } catch (e) {
-    error.value = true
-  }
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error)
+  }).finally(() => {
+    showLoading.value = false
+  })
 }
 const deleteItem = async () => {
   try {
-    loading.value = true;
-    await apiCall(`storage/${id}`, {}, 'DELETE');
+    showLoading.value = true;
+    await makeApiCall(`storage/${id}`, {}, 'DELETE');
     router.go(-1);
   } catch (e) {
     error.value = true

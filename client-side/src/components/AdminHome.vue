@@ -1,11 +1,10 @@
 <template>
-
   <NavBar />
-  <div v-if="loading" class="mx-auto m-56 flex justify-center">
+  <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
-  <div v-else-if="error" class="text-center m-56">
-    <span class="text-error">Something went wrong</span>
+  <div v-else-if="showErrorMessage" class="text-center m-56">
+    <span class="text-error">{{showErrorMessage}}</span>
   </div>
   <div v-else class="grid gap-4 grid-cols-1 md:grid-cols-2 m-4">
     <div class="w-[21rem] mx-auto">
@@ -23,24 +22,27 @@
 import {Doughnut, Pie} from 'vue-chartjs'
 import {Chart as ChartJS, Tooltip, Legend, ArcElement} from 'chart.js'
 import NavBar from "@/components/NavBar.vue";
-import {apiCall} from "@/utlis/axiosServics";
-import {ref} from "vue";
+import {makeApiCall} from "@/utlis/makeApiCall";
+import {onMounted, ref} from "vue";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
-ChartJS.register(ArcElement, Tooltip, ArcElement, Tooltip, Legend)
 
-const loading = ref(true)
-const error = ref(false)
+const showLoading = ref(true)
+const showErrorMessage = ref(null)
 const ordersWithStatusData = ref({})
 const topSoldItemsData = ref({})
 
-apiCall('admin/home').then(value => {
-  ordersWithStatusData.value = createChartData(value.ordersWithStatus)
-  topSoldItemsData.value = createChartData(value.topSoldItems)
-  loading.value = false
-}).catch(error => {
-  loading.value = false
-  error.value = true
-  console.error(error)
+ChartJS.register(ArcElement, Tooltip, ArcElement, Tooltip, Legend)
+
+onMounted(() => {
+  makeApiCall('admin/home').then(value => {
+    ordersWithStatusData.value = createChartData(value.ordersWithStatus)
+    topSoldItemsData.value = createChartData(value.topSoldItems)
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false
+  })
 })
 function createChartData(items) {
   return {

@@ -97,25 +97,24 @@
 import { Cog6ToothIcon, Bars3Icon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import { logoutUser } from "@/utlis/auth";
 import jwtDecode from "jwt-decode";
-import {ref} from "vue";
-import {apiCall} from "@/utlis/axiosServics";
+import {onMounted, ref} from "vue";
+import {makeApiCall} from "@/utlis/makeApiCall";
 
 const cart = ref({});
 const isCustomer = () =>{
   return jwtDecode(localStorage.getItem('authToken')).role === 'customer';
 }
-if (isCustomer()){
-  apiCall('cart').then(value => {
-    cart.value = formattedCart(value)
-  }).catch(err => {
-    console.log(err);
-  })
-}
+onMounted(() => {
+  if (isCustomer()){
+    makeApiCall('cart').then(value => {
+      cart.value = formattedCart(value)
+    })
+  }
+})
 const formattedCart = (vlaue) => {
   const total = Object.values(vlaue).reduce((accumulator, currentItem) => {
     return accumulator + currentItem.total_price_for_item;
   }, 0);
-
   return {
     "quantity" : Object.keys(vlaue).length,
     "total" : total

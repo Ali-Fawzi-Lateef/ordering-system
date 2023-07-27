@@ -1,10 +1,10 @@
 <template>
   <NavBar/>
-  <div v-if="loading" class="mx-auto m-56 flex justify-center">
+  <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
-  <div v-else-if="error" class="text-center m-56">
-    <span class="text-error">Something went wrong</span>
+  <div v-else-if="showErrorMessage" class="text-center md:m-56">
+    <span class="text-error">{{showErrorMessage}}</span>
   </div>
   <div v-else>
     <div class="flex justify-between">
@@ -59,52 +59,55 @@
 <script setup>
 
 import NavBar from "@/components/NavBar.vue";
-import {apiCall} from "@/utlis/axiosServics";
+import {makeApiCall} from "@/utlis/makeApiCall";
 import {InboxStackIcon, TrashIcon, ArrowRightIcon, MinusIcon} from "@heroicons/vue/24/outline";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
+import router from "@/router";
 
 const cart = ref({})
-const loading = ref(true);
-const error = ref(false);
-const id = ref(null);
-
-apiCall('cart/content').then(value => {
-  cart.value = value;
-  loading.value = false;
-  console.log(cart.value)
-}).catch(err => {
-  error.value = true;
-  loading.value = false;
-  console.error(err)
+const showLoading = ref(true);
+const showErrorMessage = ref(null);
+onMounted(() => {
+  makeApiCall('cart/content').then(value => {
+    cart.value = value;
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
+  })
 })
 const showImage = (image) => {
   window.open(image, '_blank');
 }
 const removeFromCart = (id) => {
-  apiCall(`cart/${id}`, '','DELETE').then(() => {
+  showLoading.value = true;
+  makeApiCall(`cart/${id}`, '','DELETE').then(() => {
     window.location.reload();
-  }).catch(err => {
-    error.value = true;
-    loading.value = false;
-    console.error(err)
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
   })
 }
 const clearCart = () => {
-  apiCall('cart/clear', '','DELETE').then(() => {
-    window.location.reload();
-  }).catch(err => {
-    error.value = true;
-    loading.value = false;
-    console.error(err)
+  showLoading.value = true;
+  makeApiCall('cart/clear', '','DELETE').then(() => {
+    router.push('/');
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
   })
 }
 const submitOrder = () => {
-  apiCall('order', '', 'POST').then(() => {
-    window.location.reload();
-  }).catch(err => {
-    error.value = true;
-    loading.value = false;
-    console.error(err)
+  showLoading.value = true;
+  makeApiCall('order', '', 'POST').then(() => {
+    router.push('/');
+  }).catch(error => {
+    showErrorMessage.value = apiErrorHandler(error);
+  }).finally(() => {
+    showLoading.value = false;
   });
 }
 </script>

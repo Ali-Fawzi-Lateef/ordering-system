@@ -32,7 +32,7 @@
             <label class="label">
               <router-link to="/login" class="label-text-alt link link-hover">already have an account?</router-link>
             </label>
-            <p class="text-sm text-error" v-if="showError">{{msg}}</p>
+            <p class="text-sm text-error" v-if="showErrorMessage">{{showErrorMessage}}</p>
             <div class="form-control mt-6">
               <button class="btn btn-primary" title="submit the values" @click="handleSubmit">Create Account</button>
             </div>
@@ -49,23 +49,17 @@
 
 <script setup>
 import {ref} from 'vue'
-import {apiCall} from "@/utlis/axiosServics";
+import {makeApiCall} from "@/utlis/makeApiCall";
 import router from "@/router";
+import {apiErrorHandler} from "@/utlis/apiErrorHandler";
 
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const password_confirmation = ref('');
+const name = ref(null);
+const email = ref(null);
+const password = ref(null);
+const password_confirmation = ref(null);
+const showErrorMessage = ref(null);
 
-const showError = ref(false);
-const msg = ref('');
 
-/*
-  * This function is called when the user clicks the submit button.
-  * It calls the RegisterUser function from the auth.js file.
-  * If the request is successful, the user is redirected to the login page.
-  * If the request failed, the error message will be displayed.
- */
 const handleSubmit = async () => {
   const formData = new FormData();
   formData.append('name', name.value);
@@ -73,18 +67,14 @@ const handleSubmit = async () => {
   formData.append( 'password', password.value);
   formData.append('password_confirmation', password_confirmation.value);
 
-  try {
-    await apiCall('auth/register', formData, 'POST');
+  makeApiCall('auth/register', formData, 'POST').then(() => {
     router.push('/login');
-
-  } catch (e) {
-    showError.value = true;
-    if (e.request.status === 422 || e.request.status === 401) {
-      msg.value = 'Invalid input';
-    } else {
-      msg.value = 'Something went wrong';
-    }
-  }
-
+  }).catch(error => {
+    email.value = null;
+    password.value = null;
+    password_confirmation.value = null;
+    name.value = null;
+    showErrorMessage.value = apiErrorHandler(error);
+  })
 }
 </script>

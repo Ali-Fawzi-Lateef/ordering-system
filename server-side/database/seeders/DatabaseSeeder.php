@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'علي فوزي',
             'email' => 'ali@gmail.com',
             'password' => Hash::make('00000000'),
+            'role' => 'admin'
         ]);
     }
 }
