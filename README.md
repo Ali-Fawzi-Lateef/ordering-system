@@ -4,7 +4,7 @@ Welcome to our ecommerce web application, a robust and user-friendly platform bu
 
 ## Live Demo
 
-Experience our application firsthand through the live demo available at [Ecommerce Web App](https://ali-fawzi-ecommerce-app.netlify.app/).
+Experience our application firsthand through the live demo available at [Ecommerce Web App](https://ali-fawzi-ecommerce.netlify.app/).
 
 ## Test Account
 
