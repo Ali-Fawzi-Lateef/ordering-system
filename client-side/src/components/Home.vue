@@ -19,7 +19,7 @@
           <h2 class="card-title">{{ item.name }}</h2>
           <h6 class="text-xs sm:text-sm md:text-md grow">{{ item.description }}</h6>
           <span class="text-success">{{ item.price }}$</span>
-          <div class="card-actions">
+          <div v-if="isLoggedIn()" class="card-actions">
             <div v-if="selectedItemID === item.id" class="flex justify-center">
               <button class="btn btn-ghost btn-square" @click="updateCart(item.id, 1)">
                 <PlusCircleIcon class="text-success w-6" />
@@ -31,6 +31,7 @@
             </div>
             <button v-else class="btn btn-primary" @click="addToCart(item.id)">Add to cart</button>
           </div>
+          <span v-else class="badge badge-primary badge-outline kbd-sm">Login to add to cart</span>
         </div>
       </div>
     </div>
@@ -45,6 +46,7 @@ import {onMounted, ref} from "vue";
 import Pagination from "@/components/Pagination.vue";
 import {InboxStackIcon, PlusCircleIcon, MinusCircleIcon} from "@heroicons/vue/24/outline";
 import {apiErrorHandler} from "@/helpers/apiErrorHandler";
+import {isLoggedIn} from "@/helpers/auth";
 
 const storage = ref({})
 const showLoading = ref(true);

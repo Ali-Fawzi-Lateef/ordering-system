@@ -6,7 +6,6 @@ import router from "@/router";
 import {apiErrorHandler} from "@/helpers/apiErrorHandler";
 
 export const useAuthStore = defineStore('auth',() =>{
-    const user = ref(null);
     const errorMessage = ref(null);
     async function login(email, password){
         const formData = new FormData();
@@ -20,6 +19,18 @@ export const useAuthStore = defineStore('auth',() =>{
             errorMessage.value =  apiErrorHandler(error)
         })
     }
+    async function createAccount(name, email, password, password_confirmation){
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append( 'password', password);
+        formData.append('password_confirmation', password_confirmation);
 
-    return {user, login, errorMessage}
+        await makeApiCall('auth/register', formData, 'POST').then(() => {
+            router.push('/login');
+        }).catch(error => {
+            errorMessage.value = apiErrorHandler(error);
+        })
+    }
+    return { login, createAccount, errorMessage}
 })
