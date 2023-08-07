@@ -1,5 +1,4 @@
 <template>
-  <NavBar />
   <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
@@ -23,9 +22,9 @@ import NavBar from "@/components/NavBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import StorageTable from "@/components/StorageTable.vue";
 import {onMounted, ref} from "vue";
-import {makeApiCall} from "@/utlis/makeApiCall";
+import {makeApiCall} from "@/helpers/makeApiCall";
 import {PlusCircleIcon} from "@heroicons/vue/24/outline";
-import {apiErrorHandler} from "@/utlis/apiErrorHandler";
+import {apiErrorHandler} from "@/helpers/apiErrorHandler";
 
 const storage = ref({});
 const showLoading = ref(true);

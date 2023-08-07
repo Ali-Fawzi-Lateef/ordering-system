@@ -1,5 +1,4 @@
 <template>
-  <NavBar />
   <div v-if="showLoading" class="mx-auto m-56 flex justify-center">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
@@ -16,8 +15,8 @@ import NavBar from "@/components/NavBar.vue";
 import {onMounted, ref} from "vue";
 import UsersTable from "@/components/UsersTable.vue";
 import Pagination from "@/components/Pagination.vue";
-import {makeApiCall} from "@/utlis/makeApiCall";
-import {apiErrorHandler} from "@/utlis/apiErrorHandler";
+import {makeApiCall} from "@/helpers/makeApiCall";
+import {apiErrorHandler} from "@/helpers/apiErrorHandler";
 
 const users = ref({});
 const showLoading = ref(true);

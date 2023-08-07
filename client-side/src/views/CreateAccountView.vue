@@ -1,8 +1,8 @@
 <template>
   <div class="hero min-h-screen bg-base-200">
-    <div class="hero-content flex-col w-full">
-      <div class="card w-[21rem] md:w-full max-w-3xl shadow-2xl bg-base-100 md:flex md:flex-row">
-        <form class="md:w-1/2" @submit.prevent>
+    <div class="hero-content w-full">
+      <div class="card w-[21rem] sm:w-96 max-w-3xl shadow-2xl bg-base-100">
+        <form @submit.prevent>
           <p class="text-4xl font-bold text-center m-6">Create Account</p>
           <div class="card-body">
             <div class="form-control">
@@ -30,7 +30,7 @@
               <input type="password"  title="Reenter the password" placeholder="Confirm Password" class="input input-bordered" v-model="password_confirmation" />
             </div>
             <label class="label">
-              <router-link to="/login" class="label-text-alt link link-hover">already have an account?</router-link>
+              <router-link to="/login" class="label-text-alt link link-hover link-primary">already have an account?</router-link>
             </label>
             <p class="text-sm text-error" v-if="showErrorMessage">{{showErrorMessage}}</p>
             <div class="form-control mt-6">
@@ -38,10 +38,6 @@
             </div>
           </div>
         </form>
-        <section class="hidden w-1/2 md:block bg-gray-200">
-          <img alt="basket" class="mx-auto mt-32" src="@/assets/logo.svg" width="160" height="160" />
-          <p class="text-3xl font-medium text-center m-2 mt-12">Ordering System</p>
-        </section>
       </div>
     </div>
   </div>
@@ -49,9 +45,9 @@
 
 <script setup>
 import {ref} from 'vue'
-import {makeApiCall} from "@/utlis/makeApiCall";
+import {makeApiCall} from "@/helpers/makeApiCall";
 import router from "@/router";
-import {apiErrorHandler} from "@/utlis/apiErrorHandler";
+import {apiErrorHandler} from "@/helpers/apiErrorHandler";
 
 const name = ref(null);
 const email = ref(null);

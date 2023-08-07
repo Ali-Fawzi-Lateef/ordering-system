@@ -28,6 +28,9 @@ export function isLoggedIn() {
     let authToken = getAuthToken()
     return !!authToken && !isTokenExpired(authToken)
 }
+export function getUserRole() {
+    return decode(getAuthToken()).role;
+}
 function getTokenExpirationDate(encodedToken) {
     let token = decode(encodedToken)
     if (!token.exp) {

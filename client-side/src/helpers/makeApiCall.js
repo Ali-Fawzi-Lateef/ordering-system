@@ -1,5 +1,5 @@
 import axios from "axios";
-import {getAuthToken} from "@/utlis/auth";
+import {getAuthToken} from "@/helpers/auth";
 
 export function makeApiCall(endpoint, data, method = 'GET') {
     return new Promise(async (resolve, reject) => {

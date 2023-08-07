@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
-import {isLoggedIn} from "@/utlis/auth";
+import {isLoggedIn} from "@/helpers/auth";
 import jwtDecode from "jwt-decode";
 
 const router = createRouter({
@@ -24,9 +24,11 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'home',
-      component: () => import('../views/HomeView.vue'),
-      props: (route) => ({role: jwtDecode(localStorage.getItem('authToken')).role})
+      name: 'index',
+      component: () => import('../views/IndexView.vue'),
+      meta: {
+        allowAnonymous: true
+      }
     },
     {
       path: '/profile',
@@ -72,10 +74,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'login' && isLoggedIn()) {
-    next({ name: 'home' })
-  }
-  else if (!to.meta.allowAnonymous && !isLoggedIn()) {
+  if (!to.meta.allowAnonymous && !isLoggedIn()) {
     next({
       path: '/login',
       query: { redirect: to.fullPath }
